@@ -67,13 +67,13 @@ class MainDialog extends ComponentDialog {
             } // case 'WatchVideo'
 
             case 'AskTeacher': {
-                // ´ú¸Õª¦ÂÎ?
-                await stepContext.context.sendActivity('§E°õ¹ü, ±i¤¸µ¾');
+                // æ¸¬è©¦çˆ¬èŸ²?
+                await stepContext.context.sendActivity('ä½™åŸ·å½°, å¼µå…ƒç¿”');
                 return await stepContext.next();
             } // case 'AskTeacher'
 
             case 'AskSyllabus': {
-                await stepContext.context.sendActivity(`³o¸Ì¬O½Òºõ¸ê°T ${String.fromCharCode(0xD83D, 0xDE00)}`);
+                await stepContext.context.sendActivity(`é€™è£¡æ˜¯èª²ç¶±è³‡è¨Š ${String.fromCharCode(0xD83D, 0xDE00)}`);
                 await stepContext.context.sendActivity('https://cmap.cycu.edu.tw:8443/Syllabus/CoursePreview.html?yearTerm=1091&opCode=GE728A');
                 return await stepContext.next();
             } // case 'AskSyllabus'
@@ -93,7 +93,7 @@ class MainDialog extends ComponentDialog {
     } // finalStep()
 
     async sendSuggestedActions(turnContext) {
-        var reply = MessageFactory.suggestedActions(['¬d½Òºõ', '¦Ñ®v¬O½Ö', '¬İ¼v¤ù'], 'ÁÙ»İ­n¤°»òªA°È¶Ü');
+        var reply = MessageFactory.suggestedActions(['æŸ¥èª²ç¶±', 'è€å¸«æ˜¯èª°', 'çœ‹å½±ç‰‡'], 'é‚„éœ€è¦ä»€éº¼æœå‹™å—');
         await turnContext.sendActivity(reply);
     }
 } // class MainDialog
