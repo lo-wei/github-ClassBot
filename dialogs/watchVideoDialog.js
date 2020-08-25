@@ -41,8 +41,9 @@ class WatchVideoDialog extends ComponentDialog {
         console.log('askChapterStep');
          const chapterEntities = stepContext.options["entities"];
          
-         if (chapterEntities == undefined) {
-             return await stepContext.prompt(CHAPTER_PROMPT, '請問要看哪一章節的影片呢?');
+        if (chapterEntities == undefined) {
+            const promptText = '請輸入章節or章節名稱(如 1-1 或 什麼是人工智慧)';
+             return await stepContext.prompt(CHAPTER_PROMPT, promptText);
          }
          
          return await stepContext.next(chapterEntities);
