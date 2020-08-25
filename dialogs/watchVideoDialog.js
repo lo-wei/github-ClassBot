@@ -1,10 +1,16 @@
-// import dialog
-const { ComponentDialog, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
-const { InputHints, MessageFactory } = require('botbuilder');
+// Instantiate a LuisRecognizer
 const { LuisRecognizer } = require('botbuilder-ai');
 
+const luisRecognizer = new LuisRecognizer({
+    applicationId: process.env.LuisAppId,
+    endpointKey: process.env.LuisAPIKey,
+    endpoint: `https://${process.env.LuisAPIHostName}`
+}, {}, true);
+
+// import dialog
+const { ComponentDialog, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
+
 const CHAPTER_PROMPT = 'CHAPTER_PROMPT';
-const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 
 // Import firebase package
 var firebase = require('firebase');
@@ -20,39 +26,40 @@ class WatchVideoDialog extends ComponentDialog {
         super(dialogId);
         
         this.addDialog(new TextPrompt(CHAPTER_PROMPT));
-        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
+        this.addDialog(new WaterfallDialog(dialogId, [
                 this.askChapterStep.bind(this),
                 this.videoStep.bind(this)
             ]));
         
-        this.initialDialogId = WATERFALL_DIALOG;
-        
+        this.initialDialogId = dialogId;
     } // constructor
     
     /**
      * If chapter has not been provided, prompt for one.
      */
-     async askChapterStep(stepContext) {
+    async askChapterStep(stepContext) {
+        console.log('askChapterStep');
          const chapterEntities = stepContext.options["entities"];
          
          if (chapterEntities == undefined) {
-             // return await stepContext.context.sendActivity('請問要看哪一章節的影片呢?');
              return await stepContext.prompt(CHAPTER_PROMPT, '請問要看哪一章節的影片呢?');
          }
          
          return await stepContext.next(chapterEntities);
      } // askChapterStep()
      
-     async videoStep(stepContext) {
+    async videoStep(stepContext) {
+        console.log('videoStep');
          let chapterEntities = stepContext.options["entities"];
          
          // 由於上一輪是text prompt, user result不定, 故此step再去luis找entities
-         const luisResult = await stepContext.options["recognizer"].recognize(stepContext.context); */
-         chapterEntities = Object.keys(luisResult.entities.$instance)[0].replace(/\s*/g,"");
+        const luisResult = await luisRecognizer.recognize(stepContext.context);
+         chapterEntities = Object.keys(luisResult.entities.$instance)[0];
          
          let replyText = 'init text';
          
-         try {
+        try {
+            chapterEntities.replace(/\s*/g, "");
              await database.ref(`${chapterEntities}/url`).once('value', function (snapshot) {
                  replyText = snapshot.val();
              });

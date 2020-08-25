@@ -12,10 +12,11 @@ const restify = require('restify');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter } = require('botbuilder');
+const { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } = require('botbuilder');
 
 // This bot's main dialog.
-const { EchoBot } = require('./bot');
+const { MyBot } = require('./bot');
+const { MainDialog } = require('./dialogs/mainDialog');
 
 // Create HTTP server
 const server = restify.createServer();
@@ -57,8 +58,18 @@ const onTurnErrorHandler = async (context, error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+// Define the state store for your bot.
+// See https://aka.ms/about-bot-state to learn more about using MemoryStorage.
+// A bot requires a state storage system to persist the dialog and user state between messages.
+const memoryStorage = new MemoryStorage();
+
+// Create conversation state with in-memory storage provider.
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
+
 // Create the main dialog.
-const myBot = new EchoBot();
+const mainDialog = new MainDialog(conversationState, userState);
+const myBot = new MyBot(conversationState, userState, mainDialog);
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
