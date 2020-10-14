@@ -15,9 +15,11 @@ const { DialogSet,
         ComponentDialog,
         WaterfallDialog } = require('botbuilder-dialogs');
 const { WatchVideoDialog } = require('./watchVideoDialog');
+const { DoQuizDialog } = require('./doQuizDialog');
 
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const WATCH_VIDEO_DIALOG = 'WATCH_VIDEO_DIALOG';
+const DO_QUIZ_DIALOG = 'DO_QUIZ_DIALOG';
 
 class MainDialog extends ComponentDialog {
     constructor(conversationState, userState) {
@@ -34,6 +36,7 @@ class MainDialog extends ComponentDialog {
         this.dialogs = new DialogSet(this.dialogInfoAccessor);
 
         this.dialogs.add(new WatchVideoDialog(WATCH_VIDEO_DIALOG))
+            .add(new DoQuizDialog(DO_QUIZ_DIALOG))
             .add(new WaterfallDialog(WATERFALL_DIALOG, [
                 this.startChildDialogStep.bind(this),
                 this.finalStep.bind(this)
@@ -55,7 +58,12 @@ class MainDialog extends ComponentDialog {
         // Get the result and intent of user input
         const luisResult = await luisRecognizer.recognize(stepContext.context);
         const intent = LuisRecognizer.topIntent(luisResult);
-        switch(intent) {
+        switch (intent) {
+            case 'DoQuiz': {
+                return await stepContext.beginDialog(DO_QUIZ_DIALOG);
+                break;
+            } // case 'DoQuiz'
+
             case 'WatchVideo': {
                 let chapterEntities = Object.keys(luisResult.entities.$instance)[0];
                 if (chapterEntities != undefined) {
@@ -93,7 +101,7 @@ class MainDialog extends ComponentDialog {
     } // finalStep()
 
     async sendSuggestedActions(turnContext) {
-        var reply = MessageFactory.suggestedActions(['查課綱', '老師是誰', '看影片'], '還需要什麼服務嗎');
+        var reply = MessageFactory.suggestedActions(['查課綱', '看影片', '做題目'], '還需要什麼服務嗎');
         await turnContext.sendActivity(reply);
     }
 } // class MainDialog
