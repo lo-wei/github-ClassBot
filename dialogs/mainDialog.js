@@ -81,13 +81,13 @@ class MainDialog extends ComponentDialog {
             } // case 'AskTeacher'
 
             case 'AskSyllabus': {
-                await stepContext.context.sendActivity(`這裡是課綱資訊 ${String.fromCharCode(0xD83D, 0xDE00)}`);
+                await stepContext.context.sendActivity(`這裡是課綱資訊 ${String.fromCharCode(0xD83D, 0xDC40)}`);
                 await stepContext.context.sendActivity('https://cmap.cycu.edu.tw:8443/Syllabus/CoursePreview.html?yearTerm=1091&opCode=GE728A');
                 return await stepContext.next();
             } // case 'AskSyllabus'
 
             default: {
-                const replyText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${intent})`;
+                const replyText = '可以再說明白一點';
                 await stepContext.context.sendActivity(replyText);
                 return await stepContext.next();
             } // default
