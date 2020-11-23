@@ -56,7 +56,7 @@ class DoQuizDialog extends ComponentDialog {
             });
         }
         else {
-            stepContext.context.sendActivity(`${String.fromCharCode(0x274C)}`);
+            await stepContext.context.sendActivity(`${String.fromCharCode(0x274C)}`);
 
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: `答案是 ${quiz[randint].answer}`,
