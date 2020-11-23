@@ -1,4 +1,8 @@
 const { MessageFactory } = require('botbuilder');
+const fs = require('fs');
+
+// suggest button
+const suggestion = ['查課綱', '看影片', '做題目']
 
 // Instantiate a LuisRecognizer
 const { LuisRecognizer } = require('botbuilder-ai');
@@ -55,6 +59,9 @@ class MainDialog extends ComponentDialog {
 
     async startChildDialogStep(stepContext) {
         console.log('startChildDialogStep');
+
+        this.recordConversation(stepContext);
+        
         // Get the result and intent of user input
         const luisResult = await luisRecognizer.recognize(stepContext.context);
         const intent = LuisRecognizer.topIntent(luisResult);
@@ -101,8 +108,37 @@ class MainDialog extends ComponentDialog {
     } // finalStep()
 
     async sendSuggestedActions(turnContext) {
-        var reply = MessageFactory.suggestedActions(['查課綱', '看影片', '做題目'], '還需要什麼服務嗎');
+        var reply = MessageFactory.suggestedActions(suggestion, '還需要什麼服務嗎');
         await turnContext.sendActivity(reply);
+    }
+
+    async recordConversation(stepContext) {
+        const user_name = stepContext.context.activity.from.name;
+        const user_text = stepContext.context.activity.text;
+        fs.readFile('log.json', function (err, log) {
+            if (err) {
+                return console.error(err);
+            }
+            //將二進制數據轉換為字串符
+            var userInfo = log.toString();
+            //將字符串轉換成JSON對象
+            userInfo = JSON.parse(userInfo);
+
+            if (suggestion.indexOf(user_text) === -1) { //如果使用者按建議按鈕，則不列入紀錄
+                userInfo.push({ name: user_name, text: user_text });
+            }
+
+            //write back to JSON file
+            var log_str = JSON.stringify(userInfo);
+            fs.writeFile("log.json", log_str, 'utf8', function (err) {
+                if (err) {
+                    console.log("An error occured while writing JSON Object to File.");
+                    return console.log(err);
+                }
+
+                console.log("logjson file has been saved.");
+            })
+        })
     }
 } // class MainDialog
 
