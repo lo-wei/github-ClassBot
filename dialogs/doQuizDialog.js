@@ -7,7 +7,7 @@ const { ComponentDialog,
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
 // load JSON file
-const quiz = require('../quiz_new');
+const rp = require('request-promise')
 
 class DoQuizDialog extends ComponentDialog {
     constructor(dialogId) {
@@ -31,23 +31,22 @@ class DoQuizDialog extends ComponentDialog {
     async questionStep(stepContext) {
         console.log('questionStep');
 
-        const randint = this.getRandom(0, quiz.length);
-        console.log(`quiz_num: ${randint}`);
-        stepContext.values.randint = randint;
-
+        const URL = 'http://52.185.173.84:5000/random';
+        const quiz = await rp({ url: URL, json: true })
+        stepContext.values.quiz = quiz;
+        console.log(quiz);
         return await stepContext.prompt(CHOICE_PROMPT, {
-            prompt: quiz[randint].question,
-            choices: ChoiceFactory.toChoices(['A', 'B', 'C', 'D'])
+            prompt: quiz.question,
+            choices: ChoiceFactory.toChoices(['1', '2', '3', '4'])
         });
     } // askChapterStep()
 
     async checkStep(stepContext) {
         console.log('checkStep');
 
-        const randint = stepContext.values.randint;
-
+        const quiz = stepContext.values.quiz;
         const userAns = stepContext.result.value;
-        const rightAns = quiz[randint].answer;
+        const rightAns = quiz.answer;
 
         if (userAns === rightAns) {
             return await stepContext.prompt(CHOICE_PROMPT, {
@@ -59,7 +58,7 @@ class DoQuizDialog extends ComponentDialog {
             await stepContext.context.sendActivity(`${String.fromCharCode(0x274C)}`);
 
             return await stepContext.prompt(CHOICE_PROMPT, {
-                prompt: `答案是 ${quiz[randint].answer}`,
+                prompt: `答案是 ${quiz.answer}`,
                 choices: ChoiceFactory.toChoices(['下一題', '不做了'])
             });
         }

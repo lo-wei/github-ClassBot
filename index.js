@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 const path = require('path');
@@ -53,6 +53,7 @@ const onTurnErrorHandler = async (context, error) => {
     // Send a message to the user
     await context.sendActivity('The bot encountered an error or bug.');
     await context.sendActivity('To continue to run this bot, please fix the bot source code.');
+    await context.sendActivity('絕對不會出現這段錯誤訊息');
 };
 
 // Set the onTurnError for the singleton BotFrameworkAdapter.

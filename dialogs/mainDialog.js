@@ -74,9 +74,10 @@ class MainDialog extends ComponentDialog {
             case 'WatchVideo': {
                 let chapterEntities = Object.keys(luisResult.entities.$instance)[0];
                 if (chapterEntities != undefined) {
-                    chapterEntities = chapterEntities.replace(/\s*/g, "");
+                    chapterEntities = chapterEntities.replace(/\s*/g, ""); // preprocessing
                 }
                 console.log(`chapterEntities: ${chapterEntities}`);
+
                 return await stepContext.beginDialog(WATCH_VIDEO_DIALOG, { entities: chapterEntities });
                 break;
             } // case 'WatchVideo'
@@ -88,13 +89,14 @@ class MainDialog extends ComponentDialog {
             } // case 'AskTeacher'
 
             case 'AskSyllabus': {
+                const Url = 'https://cmap.cycu.edu.tw:8443/Syllabus/CoursePreview.html?yearTerm=1091&opCode=GE728A';
                 await stepContext.context.sendActivity(`這裡是課綱資訊 ${String.fromCharCode(0xD83D, 0xDC40)}`);
-                await stepContext.context.sendActivity('https://cmap.cycu.edu.tw:8443/Syllabus/CoursePreview.html?yearTerm=1091&opCode=GE728A');
+                await stepContext.context.sendActivity(Url);
                 return await stepContext.next();
             } // case 'AskSyllabus'
 
             default: {
-                const replyText = '可以再說明白一點';
+                const replyText = '我不太明白';
                 await stepContext.context.sendActivity(replyText);
                 return await stepContext.next();
             } // default
