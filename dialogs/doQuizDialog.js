@@ -35,10 +35,19 @@ class DoQuizDialog extends ComponentDialog {
         const quiz = await rp({ url: URL, json: true })
         stepContext.values.quiz = quiz;
         console.log(quiz);
-        return await stepContext.prompt(CHOICE_PROMPT, {
-            prompt: quiz.question,
-            choices: ChoiceFactory.toChoices(['1', '2', '3', '4'])
-        });
+
+        if (quiz.question_type === "1") {
+            return await stepContext.prompt(CHOICE_PROMPT, {
+                prompt: quiz.question,
+                choices: ChoiceFactory.toChoices(['1', '2'])
+            });
+        }
+        else {
+            return await stepContext.prompt(CHOICE_PROMPT, {
+                prompt: quiz.question,
+                choices: ChoiceFactory.toChoices(['1', '2', '3', '4'])
+            });
+        }
     } // askChapterStep()
 
     async checkStep(stepContext) {
