@@ -35,14 +35,14 @@ class DoQuizDialog extends ComponentDialog {
         if (quiz.question_type === "1") { // 是非題
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.question,
-                retryPrompt: '不要調皮，請選擇答案選項',
+                retryPrompt: '請選擇答案選項',
                 choices: ChoiceFactory.toChoices(['1', '2'])
             });
         }
         else {
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.question,
-                retryPrompt: '不要調皮，請選擇答案選項',
+                retryPrompt: '請選擇答案選項',
                 choices: ChoiceFactory.toChoices(['1', '2', '3', '4'])
             });
         }
@@ -59,7 +59,7 @@ class DoQuizDialog extends ComponentDialog {
 
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.explanation,
-                retryPrompt: '正經點，選擇"下一題"或"不做了"',
+                retryPrompt: '選擇"下一題"或"不做了"',
                 choices: ChoiceFactory.toChoices(['下一題', '不做了'])
             });
         }
@@ -69,7 +69,7 @@ class DoQuizDialog extends ComponentDialog {
 
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.explanation,
-                retryPrompt: '正經點，選擇"下一題"或"不做了"',
+                retryPrompt: '選擇"下一題"或"不做了"',
                 choices: ChoiceFactory.toChoices(['下一題', '不做了'])
             });
         }
