@@ -57,7 +57,8 @@ class MyBot extends ActivityHandler {
     }
 
     async sendSuggestedActions(turnContext) {
-        var reply = MessageFactory.suggestedActions(['查課綱', '看影片', '做題目'], '您可以使用以下幾種服務');
+        var reply = MessageFactory.suggestedActions(['查課綱', '看影片', '做題目'],
+                                                    '您可以使用以下幾種服務\n\n＊(請使用手機才能顯示建議按鈕喔！)');
         await turnContext.sendActivity(reply);
     }
 

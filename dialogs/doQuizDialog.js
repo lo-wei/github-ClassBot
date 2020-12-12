@@ -23,58 +23,59 @@ class DoQuizDialog extends ComponentDialog {
         this.initialDialogId = dialogId;
     } // constructor
 
-    //產生min到max之間的亂數
-    getRandom(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
     async questionStep(stepContext) {
-        console.log('questionStep');
 
         const URL = 'http://52.185.173.84:5000/random';
         const quiz = await rp({ url: URL, json: true })
+
+        quiz.question = quiz.question.replace(/\\n/gi, "\n\n"); // 取代\\n(g全部的/i忽略大小寫)，變成\n\n 
         stepContext.values.quiz = quiz;
         console.log(quiz);
 
-        if (quiz.question_type === "1") {
+        if (quiz.question_type === "1") { // 是非題
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.question,
+                retryPrompt: '不要調皮，請選擇答案選項',
                 choices: ChoiceFactory.toChoices(['1', '2'])
             });
         }
         else {
             return await stepContext.prompt(CHOICE_PROMPT, {
                 prompt: quiz.question,
+                retryPrompt: '不要調皮，請選擇答案選項',
                 choices: ChoiceFactory.toChoices(['1', '2', '3', '4'])
             });
         }
     } // askChapterStep()
 
     async checkStep(stepContext) {
-        console.log('checkStep');
 
         const quiz = stepContext.values.quiz;
         const userAns = stepContext.result.value;
         const rightAns = quiz.answer;
 
         if (userAns === rightAns) {
+            await stepContext.context.sendActivity('答對了！');
+
             return await stepContext.prompt(CHOICE_PROMPT, {
-                prompt: '答對了！',
+                prompt: quiz.explanation,
+                retryPrompt: '正經點，選擇"下一題"或"不做了"',
                 choices: ChoiceFactory.toChoices(['下一題', '不做了'])
             });
         }
         else {
-            await stepContext.context.sendActivity(`${String.fromCharCode(0x274C)}`);
+            await stepContext.context.sendActivity(`${String.fromCharCode(0x274C)}`); // wrong emoji
+            await stepContext.context.sendActivity(`答案是 ${quiz.answer}`);
 
             return await stepContext.prompt(CHOICE_PROMPT, {
-                prompt: `答案是 ${quiz.answer}`,
+                prompt: quiz.explanation,
+                retryPrompt: '正經點，選擇"下一題"或"不做了"',
                 choices: ChoiceFactory.toChoices(['下一題', '不做了'])
             });
         }
     } // checkStep()
 
     async finalStep(stepContext) {
-        console.log('finalStep');
 
         await new Promise(resolve => setTimeout(resolve, 1000));
 

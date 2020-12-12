@@ -58,7 +58,6 @@ class MainDialog extends ComponentDialog {
     }
 
     async startChildDialogStep(stepContext) {
-        console.log('startChildDialogStep');
 
         this.recordConversation(stepContext);
         
@@ -83,7 +82,6 @@ class MainDialog extends ComponentDialog {
             } // case 'WatchVideo'
 
             case 'AskTeacher': {
-                // 測試爬蟲?
                 await stepContext.context.sendActivity('余執彰, 張元翔');
                 return await stepContext.next();
             } // case 'AskTeacher'
@@ -137,8 +135,6 @@ class MainDialog extends ComponentDialog {
                     console.log("An error occured while writing JSON Object to File.");
                     return console.log(err);
                 }
-
-                console.log("logjson file has been saved.");
             })
         })
     }
